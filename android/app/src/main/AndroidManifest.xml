@@ -30,6 +30,11 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
+        <!-- Declares this app as an Android Auto media app -->
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
         <service
             android:name="com.ryanheise.just_audio_background.AudioWaitService"
             android:exported="true"
