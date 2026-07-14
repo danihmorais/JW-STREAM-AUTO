@@ -1,35 +1,35 @@
 class MediaItemModel {
+  final String id;
   final String title;
   final String url;
-  final String artworkUrl;
+  final String? category;
+  final String? coverUrl;
 
   MediaItemModel({
+    required this.id,
     required this.title,
     required this.url,
-    required this.artworkUrl,
+    this.category,
+    this.coverUrl,
   });
 
   factory MediaItemModel.fromJson(Map<String, dynamic> json) {
-    String parsedUrl = '';
-    String parsedArtwork = '';
-
-    if (json['file'] != null && json['file']['url'] != null) {
-      parsedUrl = json['file']['url'];
-    }
-
-    if (json['trackImage'] != null && json['trackImage']['url'] != null) {
-      parsedArtwork = json['trackImage']['url'];
-    } else if (json['images'] != null && json['images']['pss'] != null && json['images']['pss']['sm'] != null) {
-      parsedArtwork = json['images']['pss']['sm'];
-    }
-
     return MediaItemModel(
-      // No fallback text here: this is the data layer and has no
-      // BuildContext to localize with. Widgets decide what to show
-      // for an empty title via AppLocalizations.
-      title: json['title'] ?? '',
-      url: parsedUrl,
-      artworkUrl: parsedArtwork,
+      id: json['id'] as String,
+      title: json['title'] as String,
+      url: json['url'] as String,
+      category: json['category'] as String?,
+      coverUrl: json['coverUrl'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'url': url,
+      'category': category,
+      'coverUrl': coverUrl,
+    };
   }
 }

@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../services/audio_service.dart';
 import '../screens/now_playing_screen.dart';
 
+
 class MiniPlayer extends StatelessWidget {
   final AudioService audioService;
 
@@ -36,9 +37,9 @@ class MiniPlayer extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: song.artworkUrl.isNotEmpty
+                      child: song.coverUrl.isNotEmpty
                           ? Image.network(
-                              song.artworkUrl,
+                              song.coverUrl,
                               width: 44,
                               height: 44,
                               fit: BoxFit.cover,

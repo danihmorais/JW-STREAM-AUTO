@@ -50,7 +50,7 @@ class AudioService {
             id: path,
             album: 'JW Stream Auto',
             title: song.title,
-            artUri: song.artworkUrl.isNotEmpty ? Uri.parse(song.artworkUrl) : null,
+            artUri: song.coverUrl.isNotEmpty ? Uri.parse(song.coverUrl) : null,
           ),
         ),
       );

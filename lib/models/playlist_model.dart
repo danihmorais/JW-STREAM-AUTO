@@ -1,46 +1,32 @@
 import 'media_model.dart';
 
-/// A user-created playlist. Songs are stored by value (title/url/artwork)
-/// rather than by reference into the catalog, so a playlist keeps working
-/// even if it mixes songs from different categories/languages.
-class PlaylistModel {
+class Playlist {
   final String id;
-  String name;
-  final List<MediaItemModel> songs;
+  final String name;
+  final List<MediaItemModel> items;
 
-  PlaylistModel({
+  Playlist({
     required this.id,
     required this.name,
-    List<MediaItemModel>? songs,
-  }) : songs = songs ?? [];
+    required this.items,
+  });
 
-  bool containsSong(MediaItemModel song) =>
-      songs.any((s) => s.url == song.url);
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'songs': songs
-            .map((s) => {
-                  'title': s.title,
-                  'url': s.url,
-                  'artworkUrl': s.artworkUrl,
-                })
-            .toList(),
-      };
-
-  factory PlaylistModel.fromJson(Map<String, dynamic> json) {
-    final rawSongs = (json['songs'] as List?) ?? const [];
-    return PlaylistModel(
+  factory Playlist.fromJson(Map<String, dynamic> json) {
+    return Playlist(
       id: json['id'] as String,
-      name: json['name'] as String? ?? '',
-      songs: rawSongs
-          .map((s) => MediaItemModel(
-                title: (s as Map)['title'] ?? '',
-                url: s['url'] ?? '',
-                artworkUrl: s['artworkUrl'] ?? '',
-              ))
-          .toList(),
+      name: json['name'] as String,
+      items: (json['items'] as List<dynamic>?)
+              ?.map((e) => MediaItemModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'items': items.map((e) => e.toJson()).toList(),
+    };
   }
 }
