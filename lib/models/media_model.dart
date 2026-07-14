@@ -24,7 +24,10 @@ class MediaItemModel {
     }
 
     return MediaItemModel(
-      title: json['title'] ?? 'Música sem título',
+      // No fallback text here: this is the data layer and has no
+      // BuildContext to localize with. Widgets decide what to show
+      // for an empty title via AppLocalizations.
+      title: json['title'] ?? '',
       url: parsedUrl,
       artworkUrl: parsedArtwork,
     );

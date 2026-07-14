@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../models/media_model.dart';
 import '../services/audio_service.dart';
 import '../services/download_service.dart';
@@ -87,7 +88,9 @@ class _SongTileState extends State<SongTile> {
               ),
       ),
       title: Text(
-        widget.song.title,
+        widget.song.title.isEmpty
+            ? AppLocalizations.of(context).untitledSong
+            : widget.song.title,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: widget.isPlaying

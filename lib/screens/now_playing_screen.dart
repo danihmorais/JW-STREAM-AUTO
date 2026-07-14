@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import '../l10n/app_localizations.dart';
 import '../services/audio_service.dart';
 
 class NowPlayingScreen extends StatelessWidget {
@@ -16,6 +17,7 @@ class NowPlayingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -51,7 +53,9 @@ class NowPlayingScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    song?.title ?? 'Nenhuma música selecionada',
+                    song == null
+                        ? l10n.noSongSelected
+                        : (song.title.isEmpty ? l10n.untitledSong : song.title),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,

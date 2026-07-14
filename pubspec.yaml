@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   just_audio: ^0.10.4
   just_audio_background: ^0.0.1-beta.17
   dio: ^5.4.0
@@ -22,6 +25,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
 
 flutter_launcher_icons:
   android: true

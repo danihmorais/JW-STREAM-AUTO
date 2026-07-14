@@ -1,8 +1,21 @@
 import 'package:dio/dio.dart';
 import '../models/media_model.dart';
 
+/// Thrown when the songs couldn't be fetched (network error, timeout,
+/// unexpected API shape). Kept separate from "the API returned zero
+/// songs", which is a legitimate, non-error result.
+class ApiServiceException implements Exception {
+  final String message;
+  ApiServiceException(this.message);
+}
+
 class ApiService {
-  final Dio _dio = Dio();
+  final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 15),
+    ),
+  );
 
   Future<List<MediaItemModel>> fetchSongs(String langCode, String pubCode) async {
     try {
@@ -29,8 +42,10 @@ class ApiService {
         }
       }
       return songs;
+    } on DioException catch (e) {
+      throw ApiServiceException(e.message ?? 'Network error');
     } catch (e) {
-      return [];
+      throw ApiServiceException(e.toString());
     }
   }
 }

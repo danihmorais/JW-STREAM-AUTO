@@ -1,0 +1,12 @@
+{
+  "@@locale": "pt",
+  "appTitle": "JW Stream Auto",
+  "searchHint": "Buscar música...",
+  "noSongsFound": "Nenhuma música encontrada",
+  "noSongMatchesQuery": "Nenhuma música corresponde a \"{query}\"",
+  "loadError": "Não foi possível carregar as músicas. Verifique sua conexão e tente novamente.",
+  "retry": "Tentar novamente",
+  "untitledSong": "Música sem título",
+  "noSongSelected": "Nenhuma música selecionada",
+  "languageToggleTooltip": "Alternar idioma da música"
+}

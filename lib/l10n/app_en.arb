@@ -1,0 +1,17 @@
+{
+  "@@locale": "en",
+  "appTitle": "JW Stream Auto",
+  "searchHint": "Search song...",
+  "noSongsFound": "No songs found",
+  "noSongMatchesQuery": "No songs match \"{query}\"",
+  "@noSongMatchesQuery": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "loadError": "Couldn't load songs. Check your connection and try again.",
+  "retry": "Retry",
+  "untitledSong": "Untitled song",
+  "noSongSelected": "No song selected",
+  "languageToggleTooltip": "Switch song language"
+}

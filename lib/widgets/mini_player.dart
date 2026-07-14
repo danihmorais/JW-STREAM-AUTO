@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import '../l10n/app_localizations.dart';
 import '../services/audio_service.dart';
 import '../screens/now_playing_screen.dart';
 
@@ -58,7 +59,9 @@ class MiniPlayer extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        song.title,
+                        song.title.isEmpty
+                            ? AppLocalizations.of(context).untitledSong
+                            : song.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyLarge?.copyWith(

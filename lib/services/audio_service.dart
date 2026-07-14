@@ -52,8 +52,8 @@ class AudioService {
     }
 
     try {
-      await player.setAudioSource(
-        ConcatenatingAudioSource(children: sources),
+      await player.setAudioSources(
+        sources,
         initialIndex: startIndex,
       );
       await player.play();

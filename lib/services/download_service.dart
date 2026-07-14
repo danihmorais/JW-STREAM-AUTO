@@ -6,18 +6,33 @@ class DownloadService {
   final Dio _dio = Dio();
 
   Future<String?> downloadTrack(String url, String filename) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/$filename';
+    final file = File(filePath);
+
+    if (await file.exists()) {
+      return filePath;
+    }
+
+    // Download to a temp file first. If the app is killed or the
+    // connection drops mid-download, we're left with a `.part` file
+    // instead of a truncated file at the real path — so a later
+    // isDownloaded() check can't mistake a partial download for a
+    // complete one.
+    final tempPath = '$filePath.part';
+    final tempFile = File(tempPath);
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/$filename';
-      final file = File(filePath);
-
-      if (await file.exists()) {
-        return filePath;
+      await _dio.download(url, tempPath);
+      if (!await tempFile.exists() || await tempFile.length() == 0) {
+        await tempFile.delete().catchError((_) => tempFile);
+        return null;
       }
-
-      await _dio.download(url, filePath);
+      await tempFile.rename(filePath);
       return filePath;
     } catch (_) {
+      if (await tempFile.exists()) {
+        await tempFile.delete().catchError((_) => tempFile);
+      }
       return null;
     }
   }

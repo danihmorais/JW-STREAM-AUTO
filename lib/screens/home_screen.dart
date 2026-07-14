@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../models/media_model.dart';
 import '../services/api_service.dart';
 import '../services/audio_service.dart';
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<MediaItemModel> _filteredSongs = [];
   String _currentLang = 'T';
   bool _isLoading = false;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -40,13 +42,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadSongs() async {
-    setState(() => _isLoading = true);
-    final songs = await _apiService.fetchSongs(_currentLang, 'sjjm');
     setState(() {
-      _songs = songs;
-      _filteredSongs = songs;
-      _isLoading = false;
+      _isLoading = true;
+      _hasError = false;
     });
+    try {
+      final songs = await _apiService.fetchSongs(_currentLang, 'sjjm');
+      setState(() {
+        _songs = songs;
+        _filteredSongs = songs;
+        _isLoading = false;
+      });
+    } on ApiServiceException {
+      setState(() {
+        _songs = [];
+        _filteredSongs = [];
+        _isLoading = false;
+        _hasError = true;
+      });
+    }
   }
 
   void _applyFilter() {
@@ -65,15 +79,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('JW Stream Auto'),
+        title: Text(l10n.appTitle),
         actions: [
           IconButton(
             icon: Text(
               _currentLang == 'T' ? 'PT' : 'EN',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
+            tooltip: l10n.languageToggleTooltip,
             onPressed: _toggleLanguage,
           ),
           const SizedBox(width: 8),
@@ -86,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Buscar música...',
+                hintText: l10n.searchHint,
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 border: OutlineInputBorder(
@@ -99,9 +115,36 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : _filteredSongs.isEmpty
-                    ? const Center(child: Text('Nenhuma música encontrada'))
-                    : StreamBuilder<int?>(
+                : _hasError
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 32),
+                              child: Text(
+                                l10n.loadError,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            FilledButton(
+                              onPressed: _loadSongs,
+                              child: Text(l10n.retry),
+                            ),
+                          ],
+                        ),
+                      )
+                    : _filteredSongs.isEmpty
+                        ? Center(
+                            child: Text(
+                              _searchController.text.trim().isEmpty
+                                  ? l10n.noSongsFound
+                                  : l10n.noSongMatchesQuery(_searchController.text.trim()),
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        : StreamBuilder<int?>(
                         stream: _audioService.currentIndexStream,
                         builder: (context, _) {
                           final currentSong = _audioService.currentSong;
