@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
@@ -36,8 +37,8 @@
             android:resource="@xml/automotive_app_desc" />
 
         <service
-            android:name="com.ryanheise.just_audio_background.AudioWaitService"
-            android:exported="true"
+            android:name="com.ryanheise.audioservice.AudioService"
+            android:exported="true" tools:ignore="Instantiatable"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
@@ -45,8 +46,8 @@
         </service>
 
         <receiver
-            android:name="com.ryanheise.just_audio_background.MediaButtonReceiver"
-            android:exported="true">
+            android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+            android:exported="true" tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>

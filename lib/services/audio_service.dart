@@ -56,7 +56,7 @@ class AudioService {
         ConcatenatingAudioSource(children: sources),
         initialIndex: startIndex,
       );
-      player.play();
+      await player.play();
     } catch (_) {}
   }
 
