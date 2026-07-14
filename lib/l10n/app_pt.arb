@@ -8,5 +8,47 @@
   "retry": "Tentar novamente",
   "untitledSong": "Música sem título",
   "noSongSelected": "Nenhuma música selecionada",
-  "languageToggleTooltip": "Alternar idioma da música"
+  "languageToggleTooltip": "Alternar idioma da música",
+  "themeToggleTooltip": "Alternar tema",
+  "categoriesTab": "Categorias",
+  "playlistsTab": "Playlists",
+  "categoryMeetings": "Reuniões",
+  "categoryVocals": "Vocal",
+  "categoryInstrumental": "Instrumental",
+  "categoryChildren": "Músicas Infantis",
+  "downloadAll": "Baixar tudo",
+  "downloadingProgress": "Baixando {done} de {total}",
+  "@downloadingProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "downloadAllComplete": "Todas as músicas foram baixadas",
+  "newPlaylist": "Nova playlist",
+  "playlistNameHint": "Nome da playlist",
+  "create": "Criar",
+  "cancel": "Cancelar",
+  "noPlaylistsYet": "Nenhuma playlist ainda. Toque em + para criar uma.",
+  "emptyPlaylist": "Esta playlist está vazia",
+  "addToPlaylist": "Adicionar à playlist",
+  "removeFromPlaylist": "Remover da playlist",
+  "deletePlaylist": "Excluir playlist",
+  "deletePlaylistConfirm": "Excluir \"{name}\"? Essa ação não pode ser desfeita.",
+  "@deletePlaylistConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "delete": "Excluir",
+  "addedToPlaylist": "Adicionada à \"{name}\"",
+  "@addedToPlaylist": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "shuffleTooltip": "Aleatório",
+  "repeatOffTooltip": "Repetir desligado",
+  "repeatAllTooltip": "Repetir tudo",
+  "repeatOneTooltip": "Repetir uma"
 }

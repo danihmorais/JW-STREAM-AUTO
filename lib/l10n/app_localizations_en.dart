@@ -37,4 +37,88 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageToggleTooltip => 'Switch song language';
+
+  @override
+  String get themeToggleTooltip => 'Switch theme';
+
+  @override
+  String get categoriesTab => 'Categories';
+
+  @override
+  String get playlistsTab => 'Playlists';
+
+  @override
+  String get categoryMeetings => 'Meetings';
+
+  @override
+  String get categoryVocals => 'Vocal';
+
+  @override
+  String get categoryInstrumental => 'Instrumental';
+
+  @override
+  String get categoryChildren => 'Children\'s Songs';
+
+  @override
+  String get downloadAll => 'Download all';
+
+  @override
+  String downloadingProgress(int done, int total) {
+    return 'Downloading $done of $total';
+  }
+
+  @override
+  String get downloadAllComplete => 'All songs downloaded';
+
+  @override
+  String get newPlaylist => 'New playlist';
+
+  @override
+  String get playlistNameHint => 'Playlist name';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get noPlaylistsYet => 'No playlists yet. Tap + to create one.';
+
+  @override
+  String get emptyPlaylist => 'This playlist is empty';
+
+  @override
+  String get addToPlaylist => 'Add to playlist';
+
+  @override
+  String get removeFromPlaylist => 'Remove from playlist';
+
+  @override
+  String get deletePlaylist => 'Delete playlist';
+
+  @override
+  String deletePlaylistConfirm(String name) {
+    return 'Delete \"$name\"? This can\'t be undone.';
+  }
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String addedToPlaylist(String name) {
+    return 'Added to \"$name\"';
+  }
+
+  @override
+  String get shuffleTooltip => 'Shuffle';
+
+  @override
+  String get repeatOffTooltip => 'Repeat off';
+
+  @override
+  String get repeatAllTooltip => 'Repeat all';
+
+  @override
+  String get repeatOneTooltip => 'Repeat one';
 }

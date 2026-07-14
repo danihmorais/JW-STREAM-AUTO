@@ -13,5 +13,47 @@
   "retry": "Retry",
   "untitledSong": "Untitled song",
   "noSongSelected": "No song selected",
-  "languageToggleTooltip": "Switch song language"
+  "languageToggleTooltip": "Switch song language",
+  "themeToggleTooltip": "Switch theme",
+  "categoriesTab": "Categories",
+  "playlistsTab": "Playlists",
+  "categoryMeetings": "Meetings",
+  "categoryVocals": "Vocal",
+  "categoryInstrumental": "Instrumental",
+  "categoryChildren": "Children's Songs",
+  "downloadAll": "Download all",
+  "downloadingProgress": "Downloading {done} of {total}",
+  "@downloadingProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "downloadAllComplete": "All songs downloaded",
+  "newPlaylist": "New playlist",
+  "playlistNameHint": "Playlist name",
+  "create": "Create",
+  "cancel": "Cancel",
+  "noPlaylistsYet": "No playlists yet. Tap + to create one.",
+  "emptyPlaylist": "This playlist is empty",
+  "addToPlaylist": "Add to playlist",
+  "removeFromPlaylist": "Remove from playlist",
+  "deletePlaylist": "Delete playlist",
+  "deletePlaylistConfirm": "Delete \"{name}\"? This can't be undone.",
+  "@deletePlaylistConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "delete": "Delete",
+  "addedToPlaylist": "Added to \"{name}\"",
+  "@addedToPlaylist": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "shuffleTooltip": "Shuffle",
+  "repeatOffTooltip": "Repeat off",
+  "repeatAllTooltip": "Repeat all",
+  "repeatOneTooltip": "Repeat one"
 }

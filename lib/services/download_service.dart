@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
+import '../models/media_model.dart';
 
 class DownloadService {
   final Dio _dio = Dio();
@@ -46,6 +47,27 @@ class DownloadService {
   Future<String> getFilePath(String filename) async {
     final directory = await getApplicationDocumentsDirectory();
     return '${directory.path}/$filename';
+  }
+
+  /// Downloads every track sequentially (one at a time, so we don't blow
+  /// past the CDN's per-client connection limits on a large playlist).
+  /// [onProgress] fires after each track — success or failure — so a
+  /// progress dialog can advance even if one file can't be fetched.
+  /// Returns the number of tracks that failed to download.
+  Future<int> downloadAll(
+    List<MediaItemModel> songs, {
+    void Function(int completed, int total)? onProgress,
+  }) async {
+    var failures = 0;
+    for (var i = 0; i < songs.length; i++) {
+      final filename = songs[i].url.split('/').last;
+      if (!await isDownloaded(filename)) {
+        final path = await downloadTrack(songs[i].url, filename);
+        if (path == null) failures++;
+      }
+      onProgress?.call(i + 1, songs.length);
+    }
+    return failures;
   }
 
   Future<void> deleteTrack(String filename) async {

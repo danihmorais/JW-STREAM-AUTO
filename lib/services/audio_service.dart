@@ -15,6 +15,11 @@ class AudioService {
   Stream<Duration?> get durationStream => player.durationStream;
   Stream<int?> get currentIndexStream => player.currentIndexStream;
   Stream<bool> get playingStream => player.playingStream;
+  Stream<bool> get shuffleModeEnabledStream => player.shuffleModeEnabledStream;
+  Stream<LoopMode> get loopModeStream => player.loopModeStream;
+
+  bool get shuffleModeEnabled => player.shuffleModeEnabled;
+  LoopMode get loopMode => player.loopMode;
 
   MediaItemModel? get currentSong =>
       (player.currentIndex != null && player.currentIndex! < _queue.length)
@@ -74,6 +79,20 @@ class AudioService {
 
   Future<void> previous() async {
     if (player.hasPrevious) await player.seekToPrevious();
+  }
+
+  Future<void> toggleShuffle() =>
+      player.setShuffleModeEnabled(!player.shuffleModeEnabled);
+
+  /// Cycles off -> all -> one -> off, matching the common three-state
+  /// repeat button found in most music players.
+  Future<void> cycleRepeatMode() {
+    final next = switch (player.loopMode) {
+      LoopMode.off => LoopMode.all,
+      LoopMode.all => LoopMode.one,
+      LoopMode.one => LoopMode.off,
+    };
+    return player.setLoopMode(next);
   }
 
   void seek(Duration position) => player.seek(position);

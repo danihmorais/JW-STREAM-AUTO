@@ -151,6 +151,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch song language'**
   String get languageToggleTooltip;
+
+  /// No description provided for @themeToggleTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch theme'**
+  String get themeToggleTooltip;
+
+  /// No description provided for @categoriesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoriesTab;
+
+  /// No description provided for @playlistsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlists'**
+  String get playlistsTab;
+
+  /// No description provided for @categoryMeetings.
+  ///
+  /// In en, this message translates to:
+  /// **'Meetings'**
+  String get categoryMeetings;
+
+  /// No description provided for @categoryVocals.
+  ///
+  /// In en, this message translates to:
+  /// **'Vocal'**
+  String get categoryVocals;
+
+  /// No description provided for @categoryInstrumental.
+  ///
+  /// In en, this message translates to:
+  /// **'Instrumental'**
+  String get categoryInstrumental;
+
+  /// No description provided for @categoryChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Children\'s Songs'**
+  String get categoryChildren;
+
+  /// No description provided for @downloadAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Download all'**
+  String get downloadAll;
+
+  /// No description provided for @downloadingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading {done} of {total}'**
+  String downloadingProgress(int done, int total);
+
+  /// No description provided for @downloadAllComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'All songs downloaded'**
+  String get downloadAllComplete;
+
+  /// No description provided for @newPlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'New playlist'**
+  String get newPlaylist;
+
+  /// No description provided for @playlistNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlist name'**
+  String get playlistNameHint;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @noPlaylistsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No playlists yet. Tap + to create one.'**
+  String get noPlaylistsYet;
+
+  /// No description provided for @emptyPlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'This playlist is empty'**
+  String get emptyPlaylist;
+
+  /// No description provided for @addToPlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to playlist'**
+  String get addToPlaylist;
+
+  /// No description provided for @removeFromPlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from playlist'**
+  String get removeFromPlaylist;
+
+  /// No description provided for @deletePlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete playlist'**
+  String get deletePlaylist;
+
+  /// No description provided for @deletePlaylistConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"? This can\'t be undone.'**
+  String deletePlaylistConfirm(String name);
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @addedToPlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to \"{name}\"'**
+  String addedToPlaylist(String name);
+
+  /// No description provided for @shuffleTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get shuffleTooltip;
+
+  /// No description provided for @repeatOffTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat off'**
+  String get repeatOffTooltip;
+
+  /// No description provided for @repeatAllTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat all'**
+  String get repeatAllTooltip;
+
+  /// No description provided for @repeatOneTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat one'**
+  String get repeatOneTooltip;
 }
 
 class _AppLocalizationsDelegate

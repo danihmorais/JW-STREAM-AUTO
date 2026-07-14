@@ -114,6 +114,52 @@ class NowPlayingScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      StreamBuilder<bool>(
+                        stream: audioService.shuffleModeEnabledStream,
+                        initialData: audioService.shuffleModeEnabled,
+                        builder: (context, snapshot) {
+                          final enabled = snapshot.data ?? false;
+                          return IconButton(
+                            icon: Icon(
+                              Icons.shuffle,
+                              color: enabled ? theme.colorScheme.primary : null,
+                            ),
+                            tooltip: l10n.shuffleTooltip,
+                            onPressed: audioService.toggleShuffle,
+                          );
+                        },
+                      ),
+                      StreamBuilder<LoopMode>(
+                        stream: audioService.loopModeStream,
+                        initialData: audioService.loopMode,
+                        builder: (context, snapshot) {
+                          final mode = snapshot.data ?? LoopMode.off;
+                          final icon = mode == LoopMode.one
+                              ? Icons.repeat_one
+                              : Icons.repeat;
+                          final tooltip = switch (mode) {
+                            LoopMode.off => l10n.repeatOffTooltip,
+                            LoopMode.all => l10n.repeatAllTooltip,
+                            LoopMode.one => l10n.repeatOneTooltip,
+                          };
+                          return IconButton(
+                            icon: Icon(
+                              icon,
+                              color: mode == LoopMode.off
+                                  ? null
+                                  : theme.colorScheme.primary,
+                            ),
+                            tooltip: tooltip,
+                            onPressed: audioService.cycleRepeatMode,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
                       IconButton(
                         iconSize: 48,
                         icon: const Icon(Icons.skip_previous),
