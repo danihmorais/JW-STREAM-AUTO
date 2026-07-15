@@ -3,12 +3,16 @@ import 'package:just_audio/just_audio.dart';
 import '../l10n/app_localizations.dart';
 import '../services/audio_service.dart';
 import '../screens/now_playing_screen.dart';
+import 'add_to_playlist_sheet.dart';
 
 
 class MiniPlayer extends StatelessWidget {
   final AudioService audioService;
+  // So the "add to playlist" action taken from here also refreshes the
+  // Playlists tab in HomeScreen, same as from a SongTile.
+  final VoidCallback? onPlaylistsChanged;
 
-  const MiniPlayer({super.key, required this.audioService});
+  const MiniPlayer({super.key, required this.audioService, this.onPlaylistsChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +75,7 @@ class MiniPlayer extends StatelessWidget {
                       ),
                     ),
                     IconButton(
+                      visualDensity: VisualDensity.compact,
                       icon: const Icon(Icons.skip_previous),
                       onPressed: audioService.previous,
                     ),
@@ -79,14 +84,31 @@ class MiniPlayer extends StatelessWidget {
                       builder: (context, snapshot) {
                         final playing = snapshot.data?.playing ?? false;
                         return IconButton(
+                          visualDensity: VisualDensity.compact,
                           icon: Icon(playing ? Icons.pause : Icons.play_arrow),
                           onPressed: audioService.playPause,
                         );
                       },
                     ),
                     IconButton(
+                      visualDensity: VisualDensity.compact,
                       icon: const Icon(Icons.skip_next),
                       onPressed: audioService.next,
+                    ),
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: const Icon(Icons.playlist_add),
+                      tooltip: AppLocalizations.of(context).addToPlaylist,
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) => AddToPlaylistSheet(
+                            item: song,
+                            onPlaylistsChanged: onPlaylistsChanged,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

@@ -106,11 +106,15 @@ class _SongTileState extends State<SongTile> {
           else
             IconButton(
               icon: const Icon(Icons.playlist_add),
+              tooltip: l10n.addToPlaylist,
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
-                  builder: (context) => AddToPlaylistSheet(item: widget.item),
+                  builder: (context) => AddToPlaylistSheet(
+                    item: widget.item,
+                    onPlaylistsChanged: widget.onPlaylistUpdate,
+                  ),
                 );
               },
             ),
