@@ -11,6 +11,7 @@ import '../services/theme_service.dart';
 import '../widgets/song_tile.dart';
 import '../widgets/mini_player.dart';
 import '../widgets/song_category.dart';
+import '../widgets/song_search_delegate.dart';
 
 class HomeScreen extends StatefulWidget {
   final ThemeService themeService;
@@ -53,8 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      // The JW media API only speaks its own "langwritten" codes (e.g.
-      // 'T' for Portuguese, 'E' for English) — not standard locale codes.
       final deviceLanguage = ui.PlatformDispatcher.instance.locale.languageCode;
       final langCode = deviceLanguage == 'pt' ? 'T' : 'E';
 
@@ -103,6 +102,24 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text('JW Stream Auto'),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                showSearch(
+                  context: context,
+                  delegate: SongSearchDelegate(
+                    allItems: _allItems,
+                    audioService: _audioService,
+                    downloadService: _downloadService,
+                    onPlaylistUpdate: _loadData,
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: _loadData,
+            ),
             ValueListenableBuilder<ThemeMode>(
               valueListenable: widget.themeService.themeMode,
               builder: (context, mode, _) => IconButton(
@@ -124,22 +141,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        body: Column(
+        body: TabBarView(
           children: [
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildGroupedList(),
-                  _buildPlaylists(),
-                ],
-              ),
-            ),
-            MiniPlayer(audioService: _audioService),
+            _buildGroupedList(),
+            _buildPlaylists(),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _loadData,
-          child: const Icon(Icons.refresh),
+        bottomNavigationBar: MiniPlayer(
+          audioService: _audioService,
+          onPlaylistsChanged: _loadData,
         ),
       ),
     );
@@ -175,6 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     downloadService: _downloadService,
                     queue: items,
                     index: e.key,
+                    onPlaylistUpdate: _loadData,
                   ))
               .toList(),
         );

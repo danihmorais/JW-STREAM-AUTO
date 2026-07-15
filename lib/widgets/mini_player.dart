@@ -5,11 +5,8 @@ import '../services/audio_service.dart';
 import '../screens/now_playing_screen.dart';
 import 'add_to_playlist_sheet.dart';
 
-
 class MiniPlayer extends StatelessWidget {
   final AudioService audioService;
-  // So the "add to playlist" action taken from here also refreshes the
-  // Playlists tab in HomeScreen, same as from a SongTile.
   final VoidCallback? onPlaylistsChanged;
 
   const MiniPlayer({super.key, required this.audioService, this.onPlaylistsChanged});

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import '../l10n/app_localizations.dart';
 import '../services/audio_service.dart';
+import '../widgets/add_to_playlist_sheet.dart';
 
 class NowPlayingScreen extends StatelessWidget {
   final AudioService audioService;
@@ -30,13 +31,27 @@ class NowPlayingScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      iconSize: 32,
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
+                  IconButton(
+                  iconSize: 32,
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                if (song != null)
+                  IconButton(
+                    iconSize: 32,
+                    icon: const Icon(Icons.playlist_add),
+                    tooltip: l10n.addToPlaylist,
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => AddToPlaylistSheet(
+                          item: song,
+                          // Nota: Como esta tela sobrepõe tudo, o HomeScreen
+                          // atualizará na próxima vez que for focado.
+                        ),
+                      );
+                    },
                   ),
                   const Spacer(),
                   ClipRRect(
