@@ -307,6 +307,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Repeat one'**
   String get repeatOneTooltip;
+
+  /// No description provided for @updateAvailableTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'New version available — tap to update'**
+  String get updateAvailableTooltip;
 }
 
 class _AppLocalizationsDelegate

@@ -37,9 +37,9 @@ class MiniPlayer extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: song.coverUrl.isNotEmpty
+                      child: (song.coverUrl?.isNotEmpty ?? false)
                           ? Image.network(
-                              song.coverUrl,
+                              song.coverUrl!,
                               width: 44,
                               height: 44,
                               fit: BoxFit.cover,

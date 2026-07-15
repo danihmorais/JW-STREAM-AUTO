@@ -55,5 +55,6 @@
   "shuffleTooltip": "Shuffle",
   "repeatOffTooltip": "Repeat off",
   "repeatAllTooltip": "Repeat all",
-  "repeatOneTooltip": "Repeat one"
+  "repeatOneTooltip": "Repeat one",
+  "updateAvailableTooltip": "New version available — tap to update"
 }

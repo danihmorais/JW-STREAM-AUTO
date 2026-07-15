@@ -39,9 +39,13 @@ class AudioService {
     final sources = <AudioSource>[];
 
     for (final song in songs) {
-      final filename = song.url.split('/').last;
-      final isLocal = await downloadService.isDownloaded(filename);
-      final path = isLocal ? await downloadService.getFilePath(filename) : song.url;
+      // Keyed by song.id, matching how DownloadService records downloads —
+      // not by a filename derived from the URL, which never matched what
+      // downloadItem() actually saved.
+      final localPath = await downloadService.getFilePath(song.id);
+      final isLocal = localPath != null;
+      final path = localPath ?? song.url;
+      final hasCover = song.coverUrl?.isNotEmpty ?? false;
 
       sources.add(
         AudioSource.uri(
@@ -50,7 +54,7 @@ class AudioService {
             id: path,
             album: 'JW Stream Auto',
             title: song.title,
-            artUri: song.coverUrl.isNotEmpty ? Uri.parse(song.coverUrl) : null,
+            artUri: hasCover ? Uri.parse(song.coverUrl!) : null,
           ),
         ),
       );

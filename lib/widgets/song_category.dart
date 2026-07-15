@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 /// The JW media API doesn't return a "category" field per track — but the
 /// same songbook is published as separate `pub` codes depending on the
@@ -45,4 +46,22 @@ class SongCategory {
   );
 
   static const all = <SongCategory>[meetings, vocals, instrumental, children];
+
+  /// Categories are stored internally as the enum's raw name (e.g.
+  /// "meetings") so MediaItemModel round-trips cleanly through local
+  /// storage; this maps that id back to the localized label for display.
+  static String label(AppLocalizations l10n, String? categoryId) {
+    switch (categoryId) {
+      case 'meetings':
+        return l10n.categoryMeetings;
+      case 'vocals':
+        return l10n.categoryVocals;
+      case 'instrumental':
+        return l10n.categoryInstrumental;
+      case 'children':
+        return l10n.categoryChildren;
+      default:
+        return categoryId ?? '';
+    }
+  }
 }

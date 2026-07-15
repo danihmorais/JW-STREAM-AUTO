@@ -73,7 +73,14 @@ class _AddToPlaylistSheetState extends State<AddToPlaylistSheet> {
             ],
           ),
           const SizedBox(height: 16),
-          Expanded(
+          // `shrinkWrap: true` already makes this ListView size itself to
+          // its content, so it doesn't need (and can't use) `Expanded`
+          // here — the parent Column is `mainAxisSize.min`, which gives
+          // an unbounded height and crashes any flex child.
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.5,
+            ),
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: _playlists.length,
@@ -83,7 +90,7 @@ class _AddToPlaylistSheetState extends State<AddToPlaylistSheet> {
                   title: Text(playlist.name),
                   onTap: () async {
                     await _playlistService.addToPlaylist(playlist.id, widget.item);
-                    if (!mounted) return;
+                    if (!context.mounted) return;
                     Navigator.pop(context);
                   },
                 );

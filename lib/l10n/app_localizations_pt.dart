@@ -122,4 +122,8 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get repeatOneTooltip => 'Repetir uma';
+
+  @override
+  String get updateAvailableTooltip =>
+      'Nova versão disponível — toque para atualizar';
 }

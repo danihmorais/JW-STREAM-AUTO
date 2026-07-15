@@ -1,13 +1,21 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../models/media_model.dart';
 import '../models/playlist_model.dart';
 import '../services/api_service.dart';
+import '../services/audio_service.dart';
 import '../services/playlist_service.dart';
 import '../services/download_service.dart';
+import '../services/theme_service.dart';
 import '../widgets/song_tile.dart';
+import '../widgets/mini_player.dart';
+import '../widgets/song_category.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final ThemeService themeService;
+
+  const HomeScreen({Key? key, required this.themeService}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -17,31 +25,49 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
   final PlaylistService _playlistService = PlaylistService();
   final DownloadService _downloadService = DownloadService();
+  final AudioService _audioService = AudioService();
 
   List<MediaItemModel> _allItems = [];
   List<Playlist> _playlists = [];
   Map<String, List<MediaItemModel>> _groupedItems = {};
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
+    _audioService.initialize();
     _loadData();
   }
 
-  Future<void> _loadData() async {
-    setState(() => _isLoading = true);
-    
-    _allItems = await _apiService.fetchMedia();
-    _playlists = await _playlistService.getPlaylists();
+  @override
+  void dispose() {
+    _audioService.dispose();
+    super.dispose();
+  }
 
-    _groupedItems = {};
-    for (var item in _allItems) {
-      final category = item.category ?? 'Outros';
-      if (!_groupedItems.containsKey(category)) {
-        _groupedItems[category] = [];
+  Future<void> _loadData() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      // The JW media API only speaks its own "langwritten" codes (e.g.
+      // 'T' for Portuguese, 'E' for English) — not standard locale codes.
+      final deviceLanguage = ui.PlatformDispatcher.instance.locale.languageCode;
+      final langCode = deviceLanguage == 'pt' ? 'T' : 'E';
+
+      _allItems = await _apiService.fetchAllSongs(langCode);
+      _playlists = await _playlistService.getPlaylists();
+
+      _groupedItems = {};
+      for (var item in _allItems) {
+        final category = item.category ?? 'Outros';
+        _groupedItems.putIfAbsent(category, () => []).add(item);
       }
-      _groupedItems[category]!.add(item);
+    } on ApiServiceException catch (e) {
+      _error = e.message;
     }
 
     if (!mounted) return;
@@ -50,8 +76,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.loadError, textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              ElevatedButton(onPressed: _loadData, child: Text(l10n.retry)),
+            ],
+          ),
+        ),
+      );
     }
 
     return DefaultTabController(
@@ -60,22 +103,38 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text('JW Stream Auto'),
           actions: [
+            ValueListenableBuilder<ThemeMode>(
+              valueListenable: widget.themeService.themeMode,
+              builder: (context, mode, _) => IconButton(
+                icon: Icon(mode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode),
+                tooltip: l10n.themeToggleTooltip,
+                onPressed: widget.themeService.toggle,
+              ),
+            ),
             IconButton(
               icon: const Icon(Icons.download_for_offline),
+              tooltip: l10n.downloadAll,
               onPressed: () => _downloadService.downloadAll(_allItems),
             ),
           ],
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
-              Tab(text: 'Cânticos'),
-              Tab(text: 'Playlists'),
+              Tab(text: l10n.categoriesTab),
+              Tab(text: l10n.playlistsTab),
             ],
           ),
         ),
-        body: TabBarView(
+        body: Column(
           children: [
-            _buildGroupedList(),
-            _buildPlaylists(),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildGroupedList(),
+                  _buildPlaylists(),
+                ],
+              ),
+            ),
+            MiniPlayer(audioService: _audioService),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -87,6 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildGroupedList() {
+    final l10n = AppLocalizations.of(context);
+
     return ListView.builder(
       itemCount: _groupedItems.length,
       itemBuilder: (context, index) {
@@ -94,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final items = _groupedItems[category]!;
 
         return ExpansionTile(
-          title: Text(category),
+          title: Text(SongCategory.label(l10n, category)),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -105,7 +166,17 @@ class _HomeScreenState extends State<HomeScreen> {
               const Icon(Icons.expand_more),
             ],
           ),
-          children: items.map((item) => SongTile(item: item)).toList(),
+          children: items
+              .asMap()
+              .entries
+              .map((e) => SongTile(
+                    item: e.value,
+                    audioService: _audioService,
+                    downloadService: _downloadService,
+                    queue: items,
+                    index: e.key,
+                  ))
+              .toList(),
         );
       },
     );
@@ -135,11 +206,19 @@ class _HomeScreenState extends State<HomeScreen> {
               const Icon(Icons.expand_more),
             ],
           ),
-          children: playlist.items.map((item) => SongTile(
-            item: item,
-            playlistId: playlist.id,
-            onPlaylistUpdate: _loadData,
-          )).toList(),
+          children: playlist.items
+              .asMap()
+              .entries
+              .map((e) => SongTile(
+                    item: e.value,
+                    audioService: _audioService,
+                    downloadService: _downloadService,
+                    queue: playlist.items,
+                    index: e.key,
+                    playlistId: playlist.id,
+                    onPlaylistUpdate: _loadData,
+                  ))
+              .toList(),
         );
       },
     );

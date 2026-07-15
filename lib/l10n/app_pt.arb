@@ -50,5 +50,6 @@
   "shuffleTooltip": "Aleatório",
   "repeatOffTooltip": "Repetir desligado",
   "repeatAllTooltip": "Repetir tudo",
-  "repeatOneTooltip": "Repetir uma"
+  "repeatOneTooltip": "Repetir uma",
+  "updateAvailableTooltip": "Nova versão disponível — toque para atualizar"
 }

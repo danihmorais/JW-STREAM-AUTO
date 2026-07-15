@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../models/media_model.dart';
+import '../widgets/song_category.dart';
 
 /// Thrown when the songs couldn't be fetched (network error, timeout,
 /// unexpected API shape). Kept separate from "the API returned zero
@@ -17,7 +18,11 @@ class ApiService {
     ),
   );
 
-  Future<List<MediaItemModel>> fetchSongs(String langCode, String pubCode) async {
+  Future<List<MediaItemModel>> fetchSongs(
+    String langCode,
+    String pubCode, [
+    SongCategory? category,
+  ]) async {
     try {
       final response = await _dio.get(
         'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
@@ -37,7 +42,10 @@ class ApiService {
         final formats = files[langCode];
         if (formats['MP3'] != null) {
           for (var item in formats['MP3']) {
-            songs.add(MediaItemModel.fromJson(item));
+            songs.add(MediaItemModel.fromApiJson(
+              item,
+              category: category?.id.name,
+            ));
           }
         }
       }
@@ -47,5 +55,21 @@ class ApiService {
     } catch (e) {
       throw ApiServiceException(e.toString());
     }
+  }
+
+  /// Fetches every song category (meetings, vocals, instrumental, children)
+  /// for the given language and merges them into one list. A failure in one
+  /// category no longer blanks out the others — it's just skipped.
+  Future<List<MediaItemModel>> fetchAllSongs(String langCode) async {
+    final results = <MediaItemModel>[];
+    for (final category in SongCategory.all) {
+      try {
+        results.addAll(await fetchSongs(langCode, category.pubCode, category));
+      } on ApiServiceException {
+        // Keep going — one category being unavailable shouldn't take
+        // down the whole library.
+      }
+    }
+    return results;
   }
 }

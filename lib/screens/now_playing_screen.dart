@@ -41,9 +41,9 @@ class NowPlayingScreen extends StatelessWidget {
                   const Spacer(),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: song != null && song.coverUrl.isNotEmpty
+                    child: song != null && (song.coverUrl?.isNotEmpty ?? false)
                         ? Image.network(
-                            song.coverUrl,
+                            song.coverUrl!,
                             width: 260,
                             height: 260,
                             fit: BoxFit.cover,
