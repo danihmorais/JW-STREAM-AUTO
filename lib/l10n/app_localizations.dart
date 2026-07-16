@@ -236,6 +236,18 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @renamePlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename playlist'**
+  String get renamePlaylist;
+
   /// No description provided for @noPlaylistsYet.
   ///
   /// In en, this message translates to:

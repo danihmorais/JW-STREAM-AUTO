@@ -83,6 +83,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get cancel => 'Cancelar';
 
   @override
+  String get save => 'Salvar';
+
+  @override
+  String get renamePlaylist => 'Renomear playlist';
+
+  @override
   String get noPlaylistsYet =>
       'Nenhuma playlist ainda. Toque em + para criar uma.';
 

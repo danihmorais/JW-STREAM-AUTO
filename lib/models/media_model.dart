@@ -23,7 +23,8 @@ class MediaItemModel {
   /// That endpoint nests the playable file (url/checksum/modifiedDatetime)
   /// under a `file` object and never sends `id`, `coverUrl` or `category` —
   /// those are things we attach ourselves.
-  factory MediaItemModel.fromApiJson(Map<String, dynamic> json, {String? category}) {
+  factory MediaItemModel.fromApiJson(Map<String, dynamic> json,
+      {String? category}) {
     final file = json['file'] as Map<String, dynamic>? ?? const {};
     final url = file['url'] as String? ?? '';
     final track = json['track'];

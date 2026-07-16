@@ -14,7 +14,8 @@ Future<void> main() async {
   // exists, so we read the device locale directly instead of going
   // through AppLocalizations.of(context).
   final deviceLanguage = ui.PlatformDispatcher.instance.locale.languageCode;
-  final channelName = deviceLanguage == 'pt' ? 'Reprodução de Áudio' : 'Audio Playback';
+  final channelName =
+      deviceLanguage == 'pt' ? 'Reprodução de Áudio' : 'Audio Playback';
 
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.example.jwstreamauto.channel.audio',

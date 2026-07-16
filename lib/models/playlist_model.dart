@@ -11,6 +11,14 @@ class Playlist {
     required this.items,
   });
 
+  Playlist copyWith({String? name, List<MediaItemModel>? items}) {
+    return Playlist(
+      id: id,
+      name: name ?? this.name,
+      items: items ?? this.items,
+    );
+  }
+
   factory Playlist.fromJson(Map<String, dynamic> json) {
     return Playlist(
       id: json['id'] as String,

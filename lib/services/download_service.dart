@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,9 +11,25 @@ import '../models/playlist_model.dart';
 /// downloaded but out of date compared to what's on JW's servers.
 enum DownloadStatus { notDownloaded, upToDate, updateAvailable }
 
-class DownloadService {
+class DownloadService extends ChangeNotifier {
   static const String _manifestKey = 'download_manifest';
   final Dio _dio = Dio();
+
+  // id -> progress (0.0-1.0) while actually downloading, or -1 while
+  // queued/waiting its turn but not yet started. Absent = not active.
+  // SongTile listens to this (via the same DownloadService instance
+  // threaded down from HomeScreen) to show a spinner instead of the
+  // download icon.
+  final Map<String, double> _activeProgress = {};
+
+  bool isActive(String id) => _activeProgress.containsKey(id);
+
+  /// Null means "queued, no known progress yet" (indeterminate spinner).
+  double? progressOf(String id) {
+    final value = _activeProgress[id];
+    if (value == null || value < 0) return null;
+    return value;
+  }
 
   /// id -> {path, checksum, modifiedDatetime}
   Future<Map<String, dynamic>> _readManifest() async {
@@ -46,30 +63,63 @@ class DownloadService {
 
     if (!force) {
       final status = _statusFromManifest(manifest, item);
-      if (status == DownloadStatus.upToDate) return;
+      if (status == DownloadStatus.upToDate) {
+        _activeProgress.remove(item.id);
+        notifyListeners();
+        return;
+      }
     }
 
-    final dir = await _songsDir();
-    final extension = item.url.split('.').last.split('?').first;
-    final filePath = '${dir.path}/${item.id}.$extension';
+    // Mark as queued/indeterminate immediately so the UI can show a
+    // spinner even before the first progress event arrives.
+    _activeProgress.putIfAbsent(item.id, () => -1);
+    notifyListeners();
 
-    await _dio.download(item.url, filePath);
+    try {
+      final dir = await _songsDir();
+      final extension = item.url.split('.').last.split('?').first;
+      final filePath = '${dir.path}/${item.id}.$extension';
 
-    manifest[item.id] = {
-      'path': filePath,
-      'checksum': item.checksum,
-      'modifiedDatetime': item.modifiedDatetime,
-    };
-    await _writeManifest(manifest);
+      await _dio.download(
+        item.url,
+        filePath,
+        onReceiveProgress: (received, total) {
+          if (total > 0) {
+            _activeProgress[item.id] = received / total;
+            notifyListeners();
+          }
+        },
+      );
+
+      manifest[item.id] = {
+        'path': filePath,
+        'checksum': item.checksum,
+        'modifiedDatetime': item.modifiedDatetime,
+      };
+      await _writeManifest(manifest);
+    } finally {
+      _activeProgress.remove(item.id);
+      notifyListeners();
+    }
   }
 
   Future<void> downloadPlaylist(Playlist playlist) async {
+    // Mark every item as queued right away so the whole batch shows a
+    // spinner immediately, not just the one currently downloading.
+    for (var item in playlist.items) {
+      _activeProgress.putIfAbsent(item.id, () => -1);
+    }
+    notifyListeners();
     for (var item in playlist.items) {
       await downloadItem(item);
     }
   }
 
   Future<void> downloadAll(List<MediaItemModel> items) async {
+    for (var item in items) {
+      _activeProgress.putIfAbsent(item.id, () => -1);
+    }
+    notifyListeners();
     for (var item in items) {
       await downloadItem(item);
     }

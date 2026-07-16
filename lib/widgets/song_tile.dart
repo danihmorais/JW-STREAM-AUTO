@@ -18,6 +18,10 @@ class SongTile extends StatefulWidget {
   final int index;
   final String? playlistId;
   final VoidCallback? onPlaylistUpdate;
+  // The search screen wants tapping a song to just start it in the mini
+  // player, not jump to the Now Playing screen. Everywhere else keeps the
+  // old behavior.
+  final bool openNowPlayingOnTap;
 
   const SongTile({
     Key? key,
@@ -28,6 +32,7 @@ class SongTile extends StatefulWidget {
     required this.index,
     this.playlistId,
     this.onPlaylistUpdate,
+    this.openNowPlayingOnTap = true,
   }) : super(key: key);
 
   @override
@@ -61,45 +66,33 @@ class _SongTileState extends State<SongTile> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          FutureBuilder<DownloadStatus>(
-            future: _statusFuture,
-            builder: (context, snapshot) {
-              final status = snapshot.data ?? DownloadStatus.notDownloaded;
-
-              if (status == DownloadStatus.updateAvailable) {
-                // The circular-arrows "update available" button the user
-                // asked for: only shown once the song is downloaded AND
-                // JW has published a newer file (different checksum/date).
-                return IconButton(
-                  icon: Icon(Icons.autorenew, color: Theme.of(context).colorScheme.primary),
-                  tooltip: l10n.updateAvailableTooltip,
-                  onPressed: () async {
-                    await widget.downloadService.downloadItem(widget.item, force: true);
-                    await _refreshStatus();
-                  },
+          AnimatedBuilder(
+            animation: widget.downloadService,
+            builder: (context, _) {
+              if (widget.downloadService.isActive(widget.item.id)) {
+                final progress =
+                    widget.downloadService.progressOf(widget.item.id);
+                return SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      value: progress, // null = indeterminate (still queued)
+                    ),
+                  ),
                 );
               }
-
-              return IconButton(
-                icon: Icon(
-                  status == DownloadStatus.upToDate
-                      ? Icons.download_done
-                      : Icons.download,
-                ),
-                onPressed: status == DownloadStatus.upToDate
-                    ? null
-                    : () async {
-                        await widget.downloadService.downloadItem(widget.item);
-                        await _refreshStatus();
-                      },
-              );
+              return _buildDownloadIcon(context, l10n);
             },
           ),
           if (widget.playlistId != null)
             IconButton(
               icon: const Icon(Icons.remove_circle_outline),
               onPressed: () async {
-                await PlaylistService().removeFromPlaylist(widget.playlistId!, widget.item.id);
+                await PlaylistService()
+                    .removeFromPlaylist(widget.playlistId!, widget.item.id);
                 widget.onPlaylistUpdate?.call();
               },
             )
@@ -126,11 +119,51 @@ class _SongTileState extends State<SongTile> {
           widget.index,
           widget.downloadService,
         );
+        if (!widget.openNowPlayingOnTap) return;
         if (!context.mounted) return;
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => NowPlayingScreen(audioService: widget.audioService),
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDownloadIcon(BuildContext context, AppLocalizations l10n) {
+    return FutureBuilder<DownloadStatus>(
+      future: _statusFuture,
+      builder: (context, snapshot) {
+        final status = snapshot.data ?? DownloadStatus.notDownloaded;
+
+        if (status == DownloadStatus.updateAvailable) {
+          // The circular-arrows "update available" button the user
+          // asked for: only shown once the song is downloaded AND
+          // JW has published a newer file (different checksum/date).
+          return IconButton(
+            icon: Icon(Icons.autorenew,
+                color: Theme.of(context).colorScheme.primary),
+            tooltip: l10n.updateAvailableTooltip,
+            onPressed: () async {
+              await widget.downloadService
+                  .downloadItem(widget.item, force: true);
+              await _refreshStatus();
+            },
+          );
+        }
+
+        return IconButton(
+          icon: Icon(
+            status == DownloadStatus.upToDate
+                ? Icons.download_done
+                : Icons.download,
+          ),
+          onPressed: status == DownloadStatus.upToDate
+              ? null
+              : () async {
+                  await widget.downloadService.downloadItem(widget.item);
+                  await _refreshStatus();
+                },
         );
       },
     );

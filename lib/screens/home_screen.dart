@@ -11,7 +11,7 @@ import '../services/theme_service.dart';
 import '../widgets/song_tile.dart';
 import '../widgets/mini_player.dart';
 import '../widgets/song_category.dart';
-import '../widgets/song_search_delegate.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final ThemeService themeService;
@@ -105,13 +105,14 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: SongSearchDelegate(
-                    allItems: _allItems,
-                    audioService: _audioService,
-                    downloadService: _downloadService,
-                    onPlaylistUpdate: _loadData,
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => SearchScreen(
+                      allItems: _allItems,
+                      audioService: _audioService,
+                      downloadService: _downloadService,
+                      onPlaylistUpdate: _loadData,
+                    ),
                   ),
                 );
               },
@@ -123,7 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ValueListenableBuilder<ThemeMode>(
               valueListenable: widget.themeService.themeMode,
               builder: (context, mode, _) => IconButton(
-                icon: Icon(mode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode),
+                icon: Icon(mode == ThemeMode.dark
+                    ? Icons.dark_mode
+                    : Icons.light_mode),
                 tooltip: l10n.themeToggleTooltip,
                 onPressed: widget.themeService.toggle,
               ),
@@ -165,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final items = _groupedItems[category]!;
 
         return ExpansionTile(
+          key: PageStorageKey(category),
           title: Text(SongCategory.label(l10n, category)),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -180,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
               .asMap()
               .entries
               .map((e) => SongTile(
+                    key: ValueKey(e.value.id),
                     item: e.value,
                     audioService: _audioService,
                     downloadService: _downloadService,
@@ -193,16 +198,55 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> _showRenameDialog(Playlist playlist) async {
+    final l10n = AppLocalizations.of(context);
+    final controller = TextEditingController(text: playlist.name);
+
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.renamePlaylist),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(hintText: l10n.playlistNameHint),
+          onSubmitted: (value) => Navigator.of(context).pop(value.trim()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+
+    if (newName != null && newName.isNotEmpty && newName != playlist.name) {
+      await _playlistService.renamePlaylist(playlist.id, newName);
+      _loadData();
+    }
+  }
+
   Widget _buildPlaylists() {
     return ListView.builder(
       itemCount: _playlists.length,
       itemBuilder: (context, index) {
         final playlist = _playlists[index];
         return ExpansionTile(
+          key: PageStorageKey(playlist.id),
           title: Text(playlist.name),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              IconButton(
+                icon: const Icon(Icons.edit),
+                tooltip: AppLocalizations.of(context).renamePlaylist,
+                onPressed: () => _showRenameDialog(playlist),
+              ),
               IconButton(
                 icon: const Icon(Icons.download),
                 onPressed: () => _downloadService.downloadPlaylist(playlist),
@@ -221,6 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
               .asMap()
               .entries
               .map((e) => SongTile(
+                    key: ValueKey('${playlist.id}_${e.value.id}'),
                     item: e.value,
                     audioService: _audioService,
                     downloadService: _downloadService,

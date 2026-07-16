@@ -16,7 +16,8 @@ class PlaylistService {
 
   Future<void> savePlaylists(List<Playlist> playlists) async {
     final prefs = await SharedPreferences.getInstance();
-    final String encoded = jsonEncode(playlists.map((e) => e.toJson()).toList());
+    final String encoded =
+        jsonEncode(playlists.map((e) => e.toJson()).toList());
     await prefs.setString(_storageKey, encoded);
   }
 
@@ -39,6 +40,15 @@ class PlaylistService {
         playlists[index].items.add(item);
         await savePlaylists(playlists);
       }
+    }
+  }
+
+  Future<void> renamePlaylist(String playlistId, String newName) async {
+    final playlists = await getPlaylists();
+    final index = playlists.indexWhere((p) => p.id == playlistId);
+    if (index != -1) {
+      playlists[index] = playlists[index].copyWith(name: newName);
+      await savePlaylists(playlists);
     }
   }
 

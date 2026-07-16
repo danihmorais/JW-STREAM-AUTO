@@ -60,7 +60,8 @@ class _AddToPlaylistSheetState extends State<AddToPlaylistSheet> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context).addedToPlaylist(created.name)),
+        content:
+            Text(AppLocalizations.of(context).addedToPlaylist(created.name)),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -83,7 +84,8 @@ class _AddToPlaylistSheetState extends State<AddToPlaylistSheet> {
           Row(
             children: [
               Expanded(
-                child: Text(l10n.addToPlaylist, style: Theme.of(context).textTheme.titleLarge),
+                child: Text(l10n.addToPlaylist,
+                    style: Theme.of(context).textTheme.titleLarge),
               ),
               IconButton(
                 icon: const Icon(Icons.close),
@@ -131,14 +133,16 @@ class _AddToPlaylistSheetState extends State<AddToPlaylistSheet> {
                     itemCount: _playlists.length,
                     itemBuilder: (context, index) {
                       final playlist = _playlists[index];
-                      final alreadyIn = playlist.items.any((i) => i.id == widget.item.id);
+                      final alreadyIn =
+                          playlist.items.any((i) => i.id == widget.item.id);
                       return ListTile(
                         title: Text(playlist.name),
                         trailing: alreadyIn ? const Icon(Icons.check) : null,
                         onTap: alreadyIn
                             ? null
                             : () async {
-                                await _playlistService.addToPlaylist(playlist.id, widget.item);
+                                await _playlistService.addToPlaylist(
+                                    playlist.id, widget.item);
                                 widget.onPlaylistsChanged?.call();
                                 if (!context.mounted) return;
                                 Navigator.pop(context);

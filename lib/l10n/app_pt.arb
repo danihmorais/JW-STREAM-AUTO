@@ -29,6 +29,8 @@
   "playlistNameHint": "Nome da playlist",
   "create": "Criar",
   "cancel": "Cancelar",
+  "save": "Salvar",
+  "renamePlaylist": "Renomear playlist",
   "noPlaylistsYet": "Nenhuma playlist ainda. Toque em + para criar uma.",
   "emptyPlaylist": "Esta playlist está vazia",
   "addToPlaylist": "Adicionar à playlist",

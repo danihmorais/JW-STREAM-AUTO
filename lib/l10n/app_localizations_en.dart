@@ -83,6 +83,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String get save => 'Save';
+
+  @override
+  String get renamePlaylist => 'Rename playlist';
+
+  @override
   String get noPlaylistsYet => 'No playlists yet. Tap + to create one.';
 
   @override

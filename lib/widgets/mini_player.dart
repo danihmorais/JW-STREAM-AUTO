@@ -9,7 +9,8 @@ class MiniPlayer extends StatelessWidget {
   final AudioService audioService;
   final VoidCallback? onPlaylistsChanged;
 
-  const MiniPlayer({super.key, required this.audioService, this.onPlaylistsChanged});
+  const MiniPlayer(
+      {super.key, required this.audioService, this.onPlaylistsChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,8 @@ class MiniPlayer extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Row(
                   children: [
                     ClipRRect(
