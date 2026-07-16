@@ -1,7 +1,6 @@
 # JW Stream Auto
 
-App Flutter para reprodução em streaming de músicas do JW.org (publicação
-`sjjm`), com suporte a Android Auto (media browser service) e download
+App Flutter para reprodução em streaming de músicas do JW.org, com suporte a Android Auto (media browser service)e CarPlay e download
 offline das faixas.
 
 ## Idiomas / Localization
@@ -20,11 +19,6 @@ Para adicionar um novo idioma:
 3. Rode `flutter pub get` para regenerar `AppLocalizations`.
 4. O novo `Locale` já aparece automaticamente em `AppLocalizations.supportedLocales`,
    usado pelo `MaterialApp` em `lib/main.dart`.
-
-Importante: o toggle "PT/EN" na tela inicial (`home_screen.dart`) **não** é o
-idioma da interface — ele troca o `langwritten` usado na API do JW.org
-(`T`/`E`) para buscar as faixas de áudio no idioma do conteúdo. O idioma da
-interface é resolvido pelo idioma do aparelho, com fallback para inglês.
 
 ## Rodando o projeto
 
